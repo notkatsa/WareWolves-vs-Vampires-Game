@@ -4,4 +4,5 @@
 Game::Game(int x, int y) {
 	sizeX = x;
 	sizeY = y;
+	sunny = true; //ksekiname mera
 }
