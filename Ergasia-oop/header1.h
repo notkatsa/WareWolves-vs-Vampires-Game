@@ -21,7 +21,7 @@ public:
 	friend class Player;
 };
 
-class Entity {//testtttttt
+class Entity {
 private:
 	int x;
 	int y;
