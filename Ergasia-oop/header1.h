@@ -10,8 +10,8 @@ protected:
 	int sizeY;
 	bool sunny;
 	std::vector<Entity*> Terrarain;
-	std::vector<npc> Warewolf;
-	std::vector<npc> Vampire;
+	std::vector<npc*> Warewolf;
+	std::vector<npc*> Vampire;
 public:
 	Game(int sizex, int sizey);
 	void CreateObjects();
@@ -22,11 +22,12 @@ public:
 };
 
 class Entity {
-private:
+protected:
 	int x;
 	int y;
 	const char* name; // limnh, dentro, ww, vmp
 public:
+	Entity();
 	Entity(const char* str, int x_size, int y_size);
 	int get_x();
 	int get_y();
@@ -40,7 +41,8 @@ private:
 	int potions;
 	int hp;
 public:
-	npc(); // constructor
+	npc(const char* str, int x_size, int y_size); // constructor
+	
 	void move(); // nada, step, attack, heal
 };
 
