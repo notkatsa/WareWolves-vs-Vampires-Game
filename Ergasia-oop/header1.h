@@ -45,8 +45,8 @@ private:
 public:
 	npc(const char* str, int x_size, int y_size); // constructor
 	
-	void move(Game game); // nada, step, attack, heal
-	bool hit(npc& enemy);
+	void move(Game &game); // nada, step, attack, heal
+	bool hit(npc& enemy, Game &game);
 	bool heal(npc& teammate);
 };
 
