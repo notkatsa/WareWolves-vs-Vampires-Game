@@ -12,10 +12,12 @@ protected:
 	std::vector<Entity*> Terrarain;
 	std::vector<npc*> Warewolf;
 	std::vector<npc*> Vampire;
+	std::vector<Entity*> All;
 public:
 	Game(int sizex, int sizey);
 	void CreateObjects();
 	void drawMap();
+	void update();
 	friend class Entity;
 	friend class npc;
 	friend class Player;
@@ -43,7 +45,9 @@ private:
 public:
 	npc(const char* str, int x_size, int y_size); // constructor
 	
-	void move(); // nada, step, attack, heal
+	void move(Game &game); // nada, step, attack, heal
+	bool hit(npc& enemy, Game &game);
+	bool heal(npc& teammate);
 };
 
 class Player : public Entity {
