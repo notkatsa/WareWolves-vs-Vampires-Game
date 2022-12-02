@@ -3,6 +3,7 @@
 
 class Entity;
 class npc;
+class Player;
 
 class Game {
 protected:
@@ -14,10 +15,12 @@ protected:
 	std::vector<npc*> Vampire;
 	std::vector<Entity*> All;
 public:
+	Player* p;
 	Game(int sizex, int sizey);
-	void CreateObjects();
+	void CreateObjects(const char* player_team);
 	void drawMap();
 	void update();
+	void healAll(std::vector<npc*>);
 	friend class Entity;
 	friend class npc;
 	friend class Player;
@@ -48,13 +51,13 @@ public:
 	void move(Game &game); // nada, step, attack, heal
 	bool hit(npc& enemy, Game &game);
 	bool heal(npc& teammate);
+	void increaseHp();
 };
 
 class Player : public Entity {
-	char* team;
+	const char* team;
 	int potions;
 public:
-	void move(); // gets called 
-	void heal();
-
+	Player(const char*);
+	void move(const char, Game &game); // gets called 
 };

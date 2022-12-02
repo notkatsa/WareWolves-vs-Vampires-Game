@@ -7,6 +7,7 @@ Game::Game(int x, int y) {
 	sizeX = x;
 	sizeY = y;
 	sunny = true; //ksekiname mera
+	p = NULL;
 }
 
 Entity::Entity() {
@@ -32,7 +33,8 @@ const char* Entity::get_name() {
 	return name;
 }
 
-void Game::CreateObjects() {
+void Game::CreateObjects(const char* playerteam) {
+	p = new Player(playerteam);
 	int num_of_trees_and_lakes = lround(sizeX * sizeY / 20);
 	for (int i = 0; i < num_of_trees_and_lakes; i++) {
 		Terrarain.push_back(new Entity("tree", sizeX, sizeY));
@@ -60,6 +62,7 @@ void Game::drawMap() {
 	for (auto i = Warewolf.begin(); i != Warewolf.end(); ++i) {
 		std::cout << (**i).get_name() << " x = " << (**i).get_x() << " y = " << (**i).get_y() << std::endl;
 	}
+	std::cout << "PLAYER: " << "x = " << this->p->get_x() << " y = " << this->p->get_y() << std::endl;
 }
 
 npc::npc(const char* str, int x_size, int y_size) {
@@ -353,6 +356,10 @@ bool npc::heal(npc& teammate) {
 	return false;
 }
 
+void npc::increaseHp() {
+	this->hp++;
+}
+
 void Game::update() {
 	for (auto i = Warewolf.begin(); i != Warewolf.end(); ++i) {
 		(*i)->move(*this);
@@ -361,3 +368,43 @@ void Game::update() {
 		(*i)->move(*this);
 	}
 }
+
+void Game::healAll(std::vector<npc*>) {
+	for (auto i = Vampire.begin(); i != Vampire.end(); ++i) {
+		(*i)->increaseHp();
+	}
+}
+
+Player::Player(const char* team) {
+	x = 0;
+	y = 0;
+	name = "player";
+	this->team = team;
+	potions = 1;
+};
+
+void Player::move(const char c, Game &game) {
+	if (c == 'w' || c == 'W') {
+		if (y == 0) return;
+		y--;
+	}
+	else if (c == 'a' || c == 'A') {
+		if (x == 0) return;
+		x--;
+	}
+	else if (c == 'd' || c == 'D') {
+		if (x == game.sizeX - 1) return;
+		x++;
+	}
+	else if (c == 's' || c == 'S') {
+		if (y == game.sizeY - 1) return;
+		y++;
+	}
+	else if (c == 'q' || c == 'Q') {
+		if (potions <= 0) return;
+		if (team == "ww")
+			game.healAll(game.Warewolf);
+		else game.healAll(game.Vampire);
+	}
+	else if (c == 'p') system("pause");
+};
