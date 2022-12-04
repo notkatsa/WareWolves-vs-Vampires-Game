@@ -37,10 +37,10 @@ void Game::CreateObjects(const char* playerteam) {
 	p = new Player(playerteam);
 	int num_of_trees_and_lakes = lround(sizeX * sizeY / 20);
 	for (int i = 0; i < num_of_trees_and_lakes; i++) {
-		Terrarain.push_back(new Entity("tree", sizeX, sizeY));
-		Terrarain.push_back(new Entity("limnh", sizeX, sizeY));
-		All.push_back(new Entity("tree", sizeX, sizeY));
-		All.push_back(new Entity("limnh", sizeX, sizeY));
+		Terrarain.push_back(new Entity("T", sizeX, sizeY));
+		Terrarain.push_back(new Entity("O", sizeX, sizeY));
+		All.push_back(new Entity("T", sizeX, sizeY));
+		All.push_back(new Entity("O", sizeX, sizeY));
 	}
 	int num_of_npc_per_team = lround(sizeX * sizeY / 15);
 	for (int i = 0; i < num_of_npc_per_team; i++) {
@@ -53,17 +53,61 @@ void Game::CreateObjects(const char* playerteam) {
 }
 
 void Game::drawMap() {
-	for (auto i = Terrarain.begin(); i != Terrarain.end(); ++i) {
-		std::cout << (**i).get_name() << " x = " << (**i).get_x() << " y = " << (**i).get_y() << std::endl;
+	for (auto i = 0; i <= 2 * sizeX; i++) { //position x is 2*x
+		for (auto j = 0; j < sizeY; j++) {//position y is y
+			if (i % 2 == 0) {
+				std::cout << "+---";
+
+			}
+			else {
+				std::cout << "|";
+				bool full = false;//empty cell
+				if (p->get_x() == i / 2 && p->get_y() == j) {
+					std::cout << " P ";
+					full = true;
+
+				}
+				if (full == false) {
+					for (auto k = Terrarain.begin(); k != Terrarain.end(); ++k) {
+						if ((**k).get_x() == i / 2 && (**k).get_y() == j) {
+							std::cout << " " << (**k).get_name() << " ";
+							full = true;//filled
+							break;
+						}
+					}
+				}
+				if (full == false) {//if still empty check for vamp
+					for (auto k = Vampire.begin(); k != Vampire.end(); ++k) {
+						if ((**k).get_x() == i / 2 && (**k).get_y() == j) {
+							std::cout << " " << "V" << " ";
+							full = true;//filled
+							break;
+						}
+					}
+				}
+				if (full == false) {//if still empty check for ww
+					for (auto z = Warewolf.begin(); z != Warewolf.end(); ++z) {
+						if ((**z).get_x() == i / 2 && (**z).get_y() == j) {
+							std::cout << " " << "W" << " ";
+							full = true;//filled
+							break;
+						}
+					}
+				}
+				if (full == false)
+					std::cout << "   ";
+			}
+		}
+		if (i % 2 == 0) {
+			std::cout << "+";//end of +--- row
+		}
+		else {
+			std::cout << "|";//end of info row
+		}
+		std::cout << "\n";
 	}
-	for (auto i = Vampire.begin(); i != Vampire.end(); ++i) {
-		std::cout << (**i).get_name() << " x = " << (**i).get_x() << " y = " << (**i).get_y() << std::endl;
-	}
-	for (auto i = Warewolf.begin(); i != Warewolf.end(); ++i) {
-		std::cout << (**i).get_name() << " x = " << (**i).get_x() << " y = " << (**i).get_y() << std::endl;
-	}
-	std::cout << "PLAYER: " << "x = " << this->p->get_x() << " y = " << this->p->get_y() << std::endl;
-}
+};
+
 
 npc::npc(const char* str, int x_size, int y_size) {
 	name = str;
