@@ -35,19 +35,24 @@ const char* Entity::get_name() {
 
 void Game::CreateObjects(const char* playerteam) {
 	p = new Player(playerteam);
+	this->All.push_back(p);
 	int num_of_trees_and_lakes = lround(sizeX * sizeY / 20);
 	for (int i = 0; i < num_of_trees_and_lakes; i++) {
-		Terrarain.push_back(new Entity("T", sizeX, sizeY));
-		Terrarain.push_back(new Entity("O", sizeX, sizeY));
-		All.push_back(new Entity("T", sizeX, sizeY));
-		All.push_back(new Entity("O", sizeX, sizeY));
+		Entity* tree = new Entity("T", sizeX, sizeY);
+		Entity* limnh = new Entity("O", sizeX, sizeY);
+		Terrarain.push_back(tree);
+		Terrarain.push_back(limnh);
+		All.push_back(tree);
+		All.push_back(limnh);
 	}
 	int num_of_npc_per_team = lround(sizeX * sizeY / 15);
 	for (int i = 0; i < num_of_npc_per_team; i++) {
-		Warewolf.push_back(new npc("ww", sizeX, sizeY));
-		Vampire.push_back(new npc("vamp", sizeX, sizeY));
-		All.push_back(new npc("ww", sizeX, sizeY));
-		All.push_back(new npc("vamp", sizeX, sizeY));
+		npc* ww = new npc("ww", sizeX, sizeY);
+		Warewolf.push_back(ww);
+		npc* vamp = new npc("vamp", sizeX, sizeY);
+		Vampire.push_back(vamp);
+		All.push_back(ww);
+		All.push_back(vamp);
 	}
 
 }
@@ -361,16 +366,13 @@ void npc::move(Game &game) {
 void deleteObj(std::vector<npc*> &vec, std::vector<Entity*> &vec2, npc* obj) {
 	std::vector<npc*>::iterator it;
 	it = std::find(vec.begin(), vec.end(), obj);
-	if (it != vec.end()) {
-		vec.erase(it);
-		std::cout << "erased an enemy";
-	}
 	std::vector<Entity*>::iterator it2;
 	it2 = std::find(vec2.begin(), vec2.end(), obj);
-	if (it2 != vec2.end()) {
+	if (it != vec.end()) 
+		vec.erase(it);
+
+	if (it2 != vec2.end()) 
 		vec2.erase(it2);
-		std::cout << "erased an enemy 2";
-	}
 
 };
 
@@ -378,7 +380,6 @@ bool npc::hit(npc& enemy, Game &game) {
 	if (attack < enemy.attack)
 		return false;
 	if (enemy.def <= attack) {
-		std::cout << "HIT A " << enemy.name;
 		enemy.hp -= attack - enemy.def;
 		if (enemy.hp <= 0) {
 			if (enemy.name == "vamp")
@@ -413,9 +414,16 @@ void Game::update() {
 	}
 }
 
-void Game::healAll(std::vector<npc*>) {
-	for (auto i = Vampire.begin(); i != Vampire.end(); ++i) {
-		(*i)->increaseHp();
+void Player::healTeam(Game& game) {
+	if (team == "ww") {
+		for (auto i = game.Warewolf.begin(); i != game.Warewolf.end(); ++i) {
+			(*i)->increaseHp();
+		}
+	}
+	else if (this->team == "vamp") {
+		for (auto i = game.Vampire.begin(); i != game.Vampire.end(); ++i) {
+			(*i)->increaseHp();
+		}
 	}
 }
 
@@ -428,27 +436,50 @@ Player::Player(const char* team) {
 };
 
 void Player::move(const char c, Game &game) {
+	// h draw zwgrafizei me x pros ta katw enw 
+	// to logic theorei to x pros ta deksia
+	// gia afto 
 	if (c == 'w' || c == 'W') {
-		if (y == 0) return;
-		y--;
-	}
-	else if (c == 'a' || c == 'A') {
+
 		if (x == 0) return;
+		for (auto i = game.All.begin(); i != game.All.end(); ++i) {
+			if ((this->get_y() == (**i).get_y() && this->get_x() - (**i).get_x() == 1) || this->get_x() == 0) {
+				return;
+			}
+		}
 		x--;
 	}
+	else if (c == 'a' || c == 'A') {
+		if (y== 0) return;
+		for (auto i = game.All.begin(); i != game.All.end(); ++i) {
+			if ((this->get_x() == (**i).get_x() && this->get_y() - (**i).get_y() == 1) || this->get_y() == 0) {
+				return;
+			}
+		}
+		y--;
+	}
 	else if (c == 'd' || c == 'D') {
-		if (x == game.sizeX - 1) return;
-		x++;
+		if (y == game.sizeX - 1) return;
+		for (auto i = game.All.begin(); i != game.All.end(); ++i) {
+			if ((this->get_x() == (**i).get_x() && (**i).get_y() - this->get_y() == 1) || this->get_y() == game.sizeY - 1) {
+				return;
+			}
+		}
+		y++;
 	}
 	else if (c == 's' || c == 'S') {
-		if (y == game.sizeY - 1) return;
-		y++;
+		if (x == game.sizeY - 1) return;
+		for (auto i = game.All.begin(); i != game.All.end(); ++i) {
+			if ((this->get_y() == (**i).get_y() && (**i).get_x() - this->get_x() == 1) || this->get_x() == game.sizeX - 1) {
+				return;
+			}
+		}
+		x++;
 	}
 	else if (c == 'q' || c == 'Q') {
 		if (potions <= 0) return;
-		if (team == "ww")
-			game.healAll(game.Warewolf);
-		else game.healAll(game.Vampire);
+		this->healTeam(game);
+		std::cout << "HEALED " << this->team;
 	}
-	else if (c == 'p') system("pause");
+	else if (c == 'P' || c == 'p') system("pause");
 };

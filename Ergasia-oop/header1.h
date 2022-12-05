@@ -20,7 +20,6 @@ public:
 	void CreateObjects(const char* player_team);
 	void drawMap();
 	void update();
-	void healAll(std::vector<npc*>);
 	friend class Entity;
 	friend class npc;
 	friend class Player;
@@ -32,6 +31,11 @@ protected:
 	int y;
 	const char* name; // limnh, dentro, ww, vmp
 public:
+	virtual void move() {
+		std::cout << "helloooooo";
+		// move wasnt needed to be virtual but for the spirit
+		// of the excercise it had to be :D
+	}
 	Entity();
 	Entity(const char* str, int x_size, int y_size);
 	int get_x();
@@ -60,4 +64,5 @@ class Player : public Entity {
 public:
 	Player(const char*);
 	void move(const char, Game &game); // gets called 
+	void healTeam(Game& game);
 };
