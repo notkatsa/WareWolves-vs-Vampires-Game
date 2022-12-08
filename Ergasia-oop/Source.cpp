@@ -15,8 +15,11 @@ int main() {
 	Game game(x, y);
 	game.CreateObjects(t);
 
+	int frames = 0;
 	bool exit = false;
 	while (!exit) {
+		cout << "It is currently " << (game.is_day() ? "sunny" : "night"); 
+		cout << endl;
 		game.drawMap();
 		game.update();
 		Sleep(200);
@@ -28,6 +31,10 @@ int main() {
 		else if (GetKeyState('P') & 8000) game.p->move('p', game);
 		else if (GetKeyState('X') & 8000) return 1;
 		system("cls");
+		if (frames++ == 15) {//5frames=1sec -> we change stateofday every 3 seconds
+			frames = 0;
+			game.update_day();
+		}
 	}
 	return 0;
 }

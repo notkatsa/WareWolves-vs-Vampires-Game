@@ -22,6 +22,12 @@ public:
 	void GeneratePotion();
 	void drawMap();
 	void update();
+	void update_day() {
+		sunny = !sunny;
+	}
+	bool is_day() {
+		return sunny;
+	}
 	friend class Entity;
 	friend class npc;
 	friend class Player;

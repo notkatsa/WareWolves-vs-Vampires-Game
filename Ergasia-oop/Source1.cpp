@@ -446,17 +446,19 @@ void Game::update() {
 }
 
 void Player::healTeam(Game& game) {
-	if (strcmp(this->team, "ww") == 0) {
+	if (strcmp(this->team, "ww") == 0 && game.sunny) {
 		for (auto i = game.Warewolf.begin(); i != game.Warewolf.end(); ++i) {
 			(*i)->increaseHp();
 		}
 		this->potions--;
+		std::cout << "HEALED " << this->team;
 	}
-	else if (strcmp(this->team, "vamp") == 0) {
+	else if (strcmp(this->team, "vamp") == 0 && !game.sunny) {
 		for (auto i = game.Vampire.begin(); i != game.Vampire.end(); ++i) {
 			(*i)->increaseHp();
 		}
 		this->potions--;
+		std::cout << "HEALED " << this->team;
 	}
 }
 
@@ -512,7 +514,6 @@ void Player::move(const char c, Game &game) {
 	else if (c == 'q' || c == 'Q') {
 		if (potions <= 0) return;
 		this->healTeam(game);
-		std::cout << "HEALED " << this->team;
 	}
 	else if (c == 'P' || c == 'p') system("pause");
 
