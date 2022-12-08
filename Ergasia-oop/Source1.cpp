@@ -46,7 +46,7 @@ void Game::GeneratePotion() {
 		int y = rand() % sizeY;
 		bool occupied = false;
 		for (auto i = All.begin(); i != All.end(); i++) {
-			if ((*i)->get_x() == x || (*i)->get_y() == y) {
+			if ((*i)->get_x() == x && (*i)->get_y() == y) {
 				occupied = true;
 				break;
 			}
