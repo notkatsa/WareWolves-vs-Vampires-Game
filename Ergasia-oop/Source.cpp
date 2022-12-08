@@ -10,7 +10,7 @@ int main() {
 	int x,y;
 	cin >> x;
 	cin >> y;
-	char t[4];
+	char t[5];
 	cin >> t;
 	Game game(x, y);
 	game.CreateObjects(t);
