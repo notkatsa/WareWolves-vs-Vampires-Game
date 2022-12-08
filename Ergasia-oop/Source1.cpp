@@ -8,6 +8,7 @@ Game::Game(int x, int y) {
 	sizeY = y;
 	sunny = true; //ksekiname mera
 	p = NULL;
+	Potion = NULL;
 }
 
 Entity::Entity() {
@@ -33,6 +34,30 @@ const char* Entity::get_name() {
 	return name;
 }
 
+void Entity::set_x_y_name(const char* str, int a, int b) {
+	name = str;
+	x = a;
+	y = b;
+}
+
+void Game::GeneratePotion() {
+	while (1) {
+		int x = rand() % sizeX;
+		int y = rand() % sizeY;
+		bool occupied = false;
+		for (auto i = All.begin(); i != All.end(); i++) {
+			if ((*i)->get_x() == x || (*i)->get_y() == y) {
+				occupied = true;
+				break;
+			}
+		}
+		if (!occupied) {
+			Potion = new Entity();
+			Potion->set_x_y_name("pot", x, y);
+			return;
+		}
+	}
+}
 void Game::CreateObjects(const char* playerteam) {
 	p = new Player(playerteam);
 	this->All.push_back(p);
@@ -54,6 +79,7 @@ void Game::CreateObjects(const char* playerteam) {
 		All.push_back(ww);
 		All.push_back(vamp);
 	}
+	GeneratePotion();
 
 }
 
@@ -69,6 +95,11 @@ void Game::drawMap() {
 				bool full = false;//empty cell
 				if (p->get_x() == i / 2 && p->get_y() == j) {
 					std::cout << " P ";
+					full = true;
+
+				}
+				if (Potion->get_x() == i / 2 && Potion->get_y() == j) {
+					std::cout << "POT";
 					full = true;
 
 				}
@@ -415,15 +446,17 @@ void Game::update() {
 }
 
 void Player::healTeam(Game& game) {
-	if (team == "ww") {
+	if (strcmp(this->team, "ww") == 0) {
 		for (auto i = game.Warewolf.begin(); i != game.Warewolf.end(); ++i) {
 			(*i)->increaseHp();
 		}
+		this->potions--;
 	}
-	else if (this->team == "vamp") {
+	else if (strcmp(this->team, "vamp") == 0) {
 		for (auto i = game.Vampire.begin(); i != game.Vampire.end(); ++i) {
 			(*i)->increaseHp();
 		}
+		this->potions--;
 	}
 }
 
@@ -482,4 +515,9 @@ void Player::move(const char c, Game &game) {
 		std::cout << "HEALED " << this->team;
 	}
 	else if (c == 'P' || c == 'p') system("pause");
+
+	if (this->x == game.Potion->get_x() && this->y == game.Potion->get_y()) {
+		this->potions++;
+		game.Potion->set_x_y_name("panatha", '13', '1908'); // lazy 
+	}
 };

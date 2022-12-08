@@ -9,6 +9,7 @@ class Game {
 protected:
 	int sizeX;
 	int sizeY;
+	Entity* Potion;
 	bool sunny;
 	std::vector<Entity*> Terrarain;
 	std::vector<npc*> Warewolf;
@@ -18,6 +19,7 @@ public:
 	Player* p;
 	Game(int sizex, int sizey);
 	void CreateObjects(const char* player_team);
+	void GeneratePotion();
 	void drawMap();
 	void update();
 	friend class Entity;
@@ -41,6 +43,7 @@ public:
 	int get_x();
 	int get_y();
 	const char* get_name();
+	void set_x_y_name(const char*, int a, int b);
 };
 
 class npc : public Entity { // ww - vmp
