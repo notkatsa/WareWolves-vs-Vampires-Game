@@ -420,7 +420,10 @@ bool npc::hit(npc& enemy, Game &game) {
 		 would decide to hit each other but because they all had the same
 		 ammount of attack and def they would stay attacking each other forever
 		 we decided to increase their HP and even if enemy.def == attack, the defendant
-		 will still take damage. This is also to comply with 9.3 in -_2022.pdf*/
+		 will still take damage. This is also to comply with 9.3 in -_2022.pdf
+		 
+		 Game still sometimes gets stuck in this scenario only: ww: 1att 3def
+																vamp: 2att 2def */
 		enemy.hp -= attack - enemy.def;
 	}
 	else if (enemy.def == attack) enemy.hp--;
@@ -532,7 +535,7 @@ void Player::move(const char c, Game &game) {
 	}
 	else if (c == 'P' || c == 'p') {
 		system("cls");
-		std::cout << "Number of Potions left for you: " + this->potions << std::endl;
+		std::cout << "Number of Potions left for you: " << this->potions << std::endl;
 		std::cout << "Number of Vampires left: " << game.Vampire.size() << std::endl;
 		std::cout << "Number of Warewolfs left: " << game.Warewolf.size() << std::endl;
 		system("pause");
