@@ -28,6 +28,12 @@ public:
 	bool is_day() {
 		return sunny;
 	}
+	// Last minute function checks if game is over
+	std::string winner_team() {
+		if (Warewolf.empty() == true) return "Vampire";
+		else if (Vampire.empty() == true) return "Warewolf";
+		else return "No winner";
+	}
 	friend class Entity;
 	friend class npc;
 	friend class Player;

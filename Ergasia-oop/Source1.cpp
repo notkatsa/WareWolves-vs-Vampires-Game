@@ -41,6 +41,7 @@ void Entity::set_x_y_name(const char* str, int a, int b) {
 }
 
 void Game::GeneratePotion() {
+	// finds empty spot and puts pot
 	while (1) {
 		int x = rand() % sizeX;
 		int y = rand() % sizeY;
@@ -63,8 +64,8 @@ void Game::CreateObjects(const char* playerteam) {
 	this->All.push_back(p);
 	int num_of_trees_and_lakes = lround(sizeX * sizeY / 20);
 	for (int i = 0; i < num_of_trees_and_lakes; i++) {
-		Entity* tree = new Entity("T", sizeX, sizeY);
-		Entity* limnh = new Entity("O", sizeX, sizeY);
+		Entity* tree = new Entity("T", sizeX, sizeY); // T looks like tree
+		Entity* limnh = new Entity("O", sizeX, sizeY);// O looks like lake
 		Terrarain.push_back(tree);
 		Terrarain.push_back(limnh);
 		All.push_back(tree);
@@ -154,7 +155,7 @@ npc::npc(const char* str, int x_size, int y_size) {
 	def = rand() % 3; // 0 1 2 
 	if (def == 0) ++def;
 	potions = rand() % 3; // 0 1 2
-	hp = 3; // paradoxh so it withstands at least 1 attack.
+	hp = 4; // paradoxh.
 };
 
 void npc::move(Game &game) {
@@ -278,7 +279,7 @@ void npc::move(Game &game) {
 		// move
 		do {
 			int position = rand() % 9; // 0-still 1-top 2-right 3-bottom 4-left
-									   // TODO 5-1:30 6-4:30 7-7:30 8-10:30
+									   // 5-1:30 6-4:30 7-7:30 8-10:30
 			bool occupied = false;
 			if (position == 0)
 				return;
@@ -395,6 +396,7 @@ void npc::move(Game &game) {
 }
 
 void deleteObj(std::vector<npc*> &vec, std::vector<Entity*> &vec2, npc* obj) {
+	// find position for the npx and erases it from vector
 	std::vector<npc*>::iterator it;
 	it = std::find(vec.begin(), vec.end(), obj);
 	std::vector<Entity*>::iterator it2;
@@ -408,23 +410,34 @@ void deleteObj(std::vector<npc*> &vec, std::vector<Entity*> &vec2, npc* obj) {
 };
 
 bool npc::hit(npc& enemy, Game &game) {
+	// doesnt want to hit
 	if (attack < enemy.attack)
 		return false;
-	if (enemy.def <= attack) {
+	// hits and returns true
+	if (enemy.def < attack) {
+		/* Quality of Life change :
+		 In many of our tests the game got stuck. Both npcs
+		 would decide to hit each other but because they all had the same
+		 ammount of attack and def they would stay attacking each other forever
+		 we decided to increase their HP and even if enemy.def == attack, the defendant
+		 will still take damage. This is also to comply with 9.3 in -_2022.pdf*/
 		enemy.hp -= attack - enemy.def;
-		if (enemy.hp <= 0) {
-			if (enemy.name == "vamp")
-				deleteObj(game.Vampire, game.All, &enemy);
-			else deleteObj(game.Warewolf, game.All, &enemy);
-		}
 	}
+	else if (enemy.def == attack) enemy.hp--;
+	if (enemy.hp <= 0) {
+		// if enemy dies remove from vector
+		if (enemy.name == "vamp") deleteObj(game.Vampire, game.All, &enemy);
+		else deleteObj(game.Warewolf, game.All, &enemy);
+	}
+	
 	return true;
 	
 }
 
 bool npc::heal(npc& teammate) {
 	int willheal = rand() % 2;
-	if (willheal && potions > 0) {
+	// decides to heal and has potions left
+	if (willheal && potions > 0 && teammate.hp < 4) {
 		teammate.hp++;
 		potions--;
 		return true;
@@ -446,6 +459,8 @@ void Game::update() {
 }
 
 void Player::healTeam(Game& game) {
+	// could make a getter on the npc class to check for their hp and only heal them if they were
+	// lower hp but to make player feel more useful he can overflow their hp!
 	if (strcmp(this->team, "ww") == 0 && game.sunny) {
 		for (auto i = game.Warewolf.begin(); i != game.Warewolf.end(); ++i) {
 			(*i)->increaseHp();
@@ -473,7 +488,7 @@ Player::Player(const char* team) {
 void Player::move(const char c, Game &game) {
 	// h draw zwgrafizei me x pros ta katw enw 
 	// to logic theorei to x pros ta deksia
-	// gia afto 
+	// gia afto to w kanei x-- kai oxi y-- opws tha theorouse kaneis etc.
 	if (c == 'w' || c == 'W') {
 
 		if (x == 0) return;

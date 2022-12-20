@@ -6,23 +6,34 @@
 using namespace std;
 int main() {
 	srand(time(0));
-	cout << "give me size x (8-64), size y(8-64), your team(ww-vamp)\n";
 	int x,y;
-	cin >> x;
-	cin >> y;
 	char t[5];
-	cin >> t;
+	bool good;
+	do {
+		good = true;
+		cout << "give me size x (5-64), size y(5-64), your team(ww for Warewolf-vamp for Vampire)\n";
+		cin >> x;
+		cin >> y;
+		cin >> t;
+		if (x>64 || y > 64 || (strcmp(t, "ww") != 0 && strcmp(t, "vamp") != 0)) {
+			cin.clear();
+			cin.ignore(100, '\n'); //100 --> asks cin to discard 100 characters from the input stream.
+			good = false;
+			cout << "Wrong input :( \n Try again!";
+		}
+	} while (good == false);
 	Game game(x, y);
 	game.CreateObjects(t);
 
 	int frames = 0;
 	bool exit = false;
-	while (!exit) {
+	while (!exit && game.winner_team()=="No winner") {
 		cout << "It is currently " << (game.is_day() ? "sunny" : "night"); 
 		cout << endl;
-		game.drawMap();
+		game.drawMap(); 
 		game.update();
 		Sleep(200);
+		// player movement
 		if (GetKeyState('W') & 8000) game.p->move('w', game);
 		else if (GetKeyState('A') & 8000) game.p->move('a', game);
 		else if (GetKeyState('S') & 8000) game.p->move('s', game);
@@ -36,5 +47,6 @@ int main() {
 			game.update_day();
 		}
 	}
+	cout << "Winner is " + game.winner_team();
 	return 0;
 }
