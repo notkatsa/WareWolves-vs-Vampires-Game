@@ -461,14 +461,14 @@ void Game::update() {
 void Player::healTeam(Game& game) {
 	// could make a getter on the npc class to check for their hp and only heal them if they were
 	// lower hp but to make player feel more useful he can overflow their hp!
-	if (strcmp(this->team, "ww") == 0 && game.sunny) {
+	if (strcmp(this->team, "ww") == 0 && !game.sunny) {
 		for (auto i = game.Warewolf.begin(); i != game.Warewolf.end(); ++i) {
 			(*i)->increaseHp();
 		}
 		this->potions--;
 		std::cout << "HEALED " << this->team;
 	}
-	else if (strcmp(this->team, "vamp") == 0 && !game.sunny) {
+	else if (strcmp(this->team, "vamp") == 0 && game.sunny) {
 		for (auto i = game.Vampire.begin(); i != game.Vampire.end(); ++i) {
 			(*i)->increaseHp();
 		}
@@ -530,7 +530,13 @@ void Player::move(const char c, Game &game) {
 		if (potions <= 0) return;
 		this->healTeam(game);
 	}
-	else if (c == 'P' || c == 'p') system("pause");
+	else if (c == 'P' || c == 'p') {
+		system("cls");
+		std::cout << "Number of Potions left for you: " + this->potions << std::endl;
+		std::cout << "Number of Vampires left: " << game.Vampire.size() << std::endl;
+		std::cout << "Number of Warewolfs left: " << game.Warewolf.size() << std::endl;
+		system("pause");
+	}
 
 	if (this->x == game.Potion->get_x() && this->y == game.Potion->get_y()) {
 		this->potions++;
